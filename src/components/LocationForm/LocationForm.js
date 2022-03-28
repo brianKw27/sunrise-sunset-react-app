@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { convertUTCToLocal } from "../../utils/times";
 import "./LocationForm.css";
 
-const LocationForm = ({ id, onChange, location }) => {
+const LocationForm = ({ id, onChange, location, times, loading }) => {
   // longitude and latitude
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
@@ -15,18 +16,26 @@ const LocationForm = ({ id, onChange, location }) => {
 
   return (
     <div className="location-wrapper">
+      <h2>Location {id + 1}</h2>
       <label>Longitude</label>
       <input
         type="text"
-        value={longitude}
+        value={longitude || ""}
         onChange={(e) => handleChange(e.target.value, "long")}
       />
       <label>Latitude</label>
       <input
         type="text"
-        value={latitude}
+        value={latitude || ""}
         onChange={(e) => handleChange(e.target.value, "lat")}
       />
+      {loading && <p>loading...</p>}
+      {times && (
+        <p>
+          sunrise:{convertUTCToLocal(times?.sunrise)} sunset:
+          {convertUTCToLocal(times?.sunset)}
+        </p>
+      )}
     </div>
   );
 };

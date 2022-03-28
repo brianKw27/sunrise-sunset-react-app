@@ -8,17 +8,20 @@ const LOCATIONSLIMIT = 5;
 export default function App() {
   const newLocation = { latitude: "", longitude: "" };
   const [locations, setLocations] = useState([newLocation]);
+  const [sunTimes, setSunTimes] = useState([]);
+  const [loading, setLoading] = useState(false);
   const handleNext = async () => {
-    // const response = await getSunriseSunsetInfo({
-    //   latitude: 36.72016,
-    //   longitude: -44.42034,
-    //   formatted: false
-    // });
-    // console.log(response);
     if (locations.length === LOCATIONSLIMIT) {
+      setLoading(true);
       Promise.all(locations.map((location) => getSunriseSunsetInfo(location)))
-        .then((values) => console.log(values))
-        .catch((err) => alert(err));
+        .then((values) => {
+          setLoading(false);
+          return setSunTimes(values);
+        })
+        .catch((err) => {
+          setLoading(false);
+          alert(err);
+        });
     } else {
       setLocations([...locations, newLocation]);
     }
@@ -37,13 +40,13 @@ export default function App() {
         id={index}
         onChange={handleFieldChange}
         location={locations[index]}
+        times={sunTimes[index]}
+        loading={loading}
       />
     ));
 
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
       {locationForms()}
       <br />
       <div>
